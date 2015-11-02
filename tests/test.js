@@ -15,17 +15,119 @@
 
     // TODO: Vérifier que la création d'objets SpeedCheck est Possible
 
+    test('Test creation d\'objets "SpeedCheck"', function() {
+      expect(6);
+      ok(typeof window.createSpeedCheck() !== 'undefined', 'Appel de la fonction "createSpeedCheck".');
+      var speed0 = window.createSpeedCheck();
+      ok(typeof speed0 === 'object', 'La fonction "createSpeedCheck" doit retourner un objet.');
+
+      ok(typeof window.createSpeedCheckFR() !== 'undefined', 'Appel de la fonction "createSpeedCheckFR".');
+      var speed1 = window.createSpeedCheckFR();
+      ok(typeof speed1 === 'object', 'La fonction "createSpeedCheckFR" doit retourner un objet.');
+
+      ok(typeof window.createSpeedCheckBE() !== 'undefined', 'Appel de la fonction "createSpeedCheckBE".');
+      var speed2 = window.createSpeedCheckBE();
+      ok(typeof speed2 === 'object', 'La fonction "createSpeedCheckBE" doit retourner un objet.');
+    });
 
     // TODO: Vérifier que les objets créés directement avec creatSpeedCheck ne sont pas utilisables :
     // speed0 = creatSpeedCheck();
     // speed0.speed = 42; // SHOULD throw a SpeedCheckError.
     // speed0.licencePlate = '3-DFE-456'; // SOULD throw a SpeedCheckError.
 
+    test('Test erreurs dans la creation d\'objets avec "createSpeedCheck"', function() {
+      expect(2);
+      var speed0 = window.createSpeedCheck();
+      var message;
+      try{
+        speed0.speed = 42;
+      } catch(erreur){
+        message = erreur.message;
+      }
+      equal(message, 'The "createSpeedCheck" should not be instantiated. It should be specialized.', 'Erreur Speed.');
+      try{
+        speed0.licencePlate = '3-DFE-456';
+      } catch(erreur){
+        message = erreur.message;
+      }
+      equal(message, 'The "createSpeedCheck" should not be instantiated. It should be specialized.', 'Erreur licencePlate.');
+    });
 
     // TODO: Vérifier que TOUTES les fonctionnalités de createSpeedCheckFR sont correctes (effects de bords, valeurs négatives, etc.) pour tous les attributs (speed et licencePlate)
 
+    test('Test creation d\'objets "SpeedCheckFR"', function() {
+      expect(9);
+      var speed0 = window.createSpeedCheckFR();
+      var erreur;
+      var message;
+      equal(speed0.speed, 0, 'Speed par defaut');
+      try{
+        speed0.speed = -10;
+      } catch(e){
+        erreur = e.name;
+        message = e.message;
+      }
+      equal(erreur, 'SpeedCheckError', 'Valeur négative');
+      equal(message, 'Vitesse négative. Vous roulez a contre sens?', 'Message valeur négative');
+
+      speed0.speed = 130;
+      equal(speed0.infraction , false, 'Vitesse = '+ speed0.speed +' : Pas d\'infraction');
+
+      speed0.speed = 140;
+      equal(speed0.infraction , true, 'Vitesse = '+ speed0.speed +' : Infraction !!!');
+
+      equal(speed0.licencePlate, '???', 'Liscence Plate par defaut');
+
+      try{
+        speed0.licencePlate = '3-DFE-456';
+      } catch(e){
+        erreur = e.name;
+        message = e.message;
+      }
+      equal(erreur, 'SpeedCheckError', 'Plaque non reconnue');
+      equal(message, 'Plaque non reconnue. Vous avez de la chance.', 'Message plaque non reconnue');
+
+      speed0.licencePlate = 'DE123FG';
+      equal(speed0.licencePlate, 'DE123FG', 'Plaque reconnue');
+    });
+
     // TODO: Vérifier que TOUTES les fonctionnalités de createSpeedCheckBE sont correctes (effects de bords, valeurs négatives, etc.) pour tous les attributs (speed et licencePlate)
 
+    test('Test creation d\'objets "SpeedCheckBE"', function() {
+      expect(9);
+      var speed0 = window.createSpeedCheckBE();
+      var erreur;
+      var message;
+      equal(speed0.speed, 0, 'Speed par defaut');
+      try{
+        speed0.speed = -10;
+      } catch(e){
+        erreur = e.name;
+        message = e.message;
+      }
+      equal(erreur, 'SpeedCheckError', 'Valeur négative');
+      equal(message, 'Vitesse négative. Vous roulez a contre sens?', 'Message valeur négative');
+
+      speed0.speed = 120;
+      equal(speed0.infraction , false, 'Vitesse = '+ speed0.speed +' : Pas d\'infraction');
+
+      speed0.speed = 130;
+      equal(speed0.infraction , true, 'Vitesse = '+ speed0.speed +' : Infraction !!!');
+
+      equal(speed0.licencePlate, '???', 'Liscence Plate par defaut');
+
+      try{
+        speed0.licencePlate = 'DE123FG';
+      } catch(e){
+        erreur = e.name;
+        message = e.message;
+      }
+      equal(erreur, 'SpeedCheckError', 'Plaque non reconnue');
+      equal(message, 'Plaque non reconnue. Vous avez de la chance.', 'Message plaque non reconnue');
+
+      speed0.licencePlate = '3-DFE-456';
+      equal(speed0.licencePlate, '3-DFE-456', 'Plaque reconnue');
+    });
 
     // TODO: Vérifier que la fonction toString() fonctionne bien.
     //  - chaine de caractère attentue pour une infracion (e.g. licencePlate === 'WD366MD' et  speed === 135):
@@ -33,6 +135,19 @@
     //  - chaine de caractère attendue pour sans infraction (e.g. licencePlate === 'WD366MD' et  speed === 105):
     //      "Véhicule WD366MD roule à 105 km/h. Ça va, circulez..."
 
+    test('Test de la fonction toString', function() {
+      expect(4);
+      var speed0 = window.createSpeedCheckFR();
+      var speed1 = window.createSpeedCheckBE();
+      speed0.speed = 130;
+      speed1.speed = 130;
+      speed0.licencePlate = 'DE123FG'
+      speed1.licencePlate = '3-DFE-456';
+      equal(speed0.infraction , false, 'Vitesse = '+ speed0.speed +' : Pas d\'infraction');
+      equal(speed1.infraction , true, 'Vitesse = '+ speed1.speed +' : Infraction !!!');
+      equal(speed0.toString(), 'Véhicule DE123FG roule à 130 km/h. Ça va, circulez...', 'Pas d\'infraction');
+      equal(speed1.toString(), 'Véhicule 3-DFE-456 roule à 130 km/h. Infraction!', 'Infraction');
+    });
 
 
 
