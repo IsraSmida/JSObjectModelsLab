@@ -316,6 +316,9 @@
 
     // TODO Write the whole test module for testing with the app/data/eure.json file.
     var obj;
+    var objets;
+    var autres;
+    var objetShapes = {buildings:[], roads:[], amenities:[], naturals:[]};
     module('Asynchronous Unit Test Module', {
         setup: function() {
             stop();
@@ -323,7 +326,6 @@
             // You can load a resource before loaching the test...
             $.get('test.json').success(function(data){
                 obj = data;
-                start();
             });
 
             // ... Or any asynchroneous task
@@ -332,7 +334,46 @@
             //     start();
             // }, 1000);
 
+            $.get('data/eure.json').success(function(data){
+                objets = data;
+                autres = 0;
+                objetShapes = {buildings:[], roads:[], amenities:[], naturals:[]};
+                for (var i = 0; i < objets.length; i++){
+                  if (objets[i].hasOwnProperty("building") && objets[i].building === true) {
+                    objetShapes.buildings.push(window.Shapes.createBuilding(objets[i]));
+                  }
+                  else if (objets[i].hasOwnProperty("amenity")){
+                    objetShapes.amenities.push(window.Shapes.createAmenity(objets[i]));
+                  }
+                  else if (objets[i].hasOwnProperty("highway")) {
+                    objetShapes.roads.push(window.Shapes.createRoad(objets[i]));
+                  }
+                  else if (objets[i].hasOwnProperty("natural")) {
+                    objetShapes.naturals.push(window.Shapes.createNatural(objets[i]));
+                  }
+                  else
+                  autres++;
+
+                }
+                start();
+            });
         }
+    });
+
+    test('test nombre d\'objets', function(){
+      expect(2);
+      ok(objets.length !== 0, 'Longueur non nulle');
+      var result = objetShapes.buildings.length + objetShapes.amenities.length + objetShapes.roads.length + objetShapes.naturals.length + autres;
+      equal(objets.length, result, 'nombre objets');
+    });
+
+    test('test surface des buildings', function(){
+      expect(1);
+      var res = objetShapes.buildings[0].getArea();
+      for (var i=1 ; i < objetShapes.buildings.length ; i++) {
+        res += objetShapes.buildings[i].getArea();
+      }
+      ok(res !== 0, 'Somme surfaces non nulle');
     });
 
     test('test 1', function() {
