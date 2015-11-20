@@ -48,45 +48,58 @@
 
   function createRoad(attributes) {
     attributes = attributes;
+    attributes.category = attributes.highway;
+
     var road = createShape(attributes);
+
     road.getCategory = function() {
-      return attributes.highway;
+      return attributes.category;
     };
-    road.category = road.getCategory();
+
     return road;
   };
 
   function createBuilding(attributes) {
     attributes = attributes;
+
     var building = createShape(attributes);
 
     building.getArea = function() {
       var area = 0;
-      //TODO
-
-      return area;
+      for(var i = 0; i < attributes.nodes.length-1; i++) {
+        area += attributes.nodes[i].x*attributes.nodes[i+1].y - attributes.nodes[i+1].x * attributes.nodes[i].y;
+      }
+      return area / 2;
     };
+
     building.area = building.getArea();
+
     return building;
   };
 
   function createAmenity(attributes) {
     attributes = attributes;
+    attributes.type = attributes.amenity;
+
     var amenity = createShape(attributes);
+
     amenity.getType = function() {
-      return attributes.amenity;
+      return attributes.type;
     };
-    amenity.type = amenity.getType();
+
     return amenity;
   };
 
   function createNatural(attributes) {
     attributes = attributes;
+    attributes.type = attributes.natural;
+
     var natural = createShape(attributes);
+
     natural.getType = function() {
-      return attributes.natural;
+      return attributes.type;
     };
-    natural.type = natural.getType();
+
     return natural;
   };
 
