@@ -295,7 +295,7 @@
     });
 
 
-    test('Test the createAmenity function', function() {
+    test('Test the createNatural function', function() {
       expect(1);
       ok(typeof window.Shapes.createNatural !== 'undefined', 'The Shapes module sould expose a "createNatural" function');
     });
